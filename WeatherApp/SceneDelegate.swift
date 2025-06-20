@@ -10,13 +10,39 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var mainCoordinator: MainCoordinator?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        // Initialize CoreDataStack
+        let coreDataStack = CoreDataStack.shared
+        // Initialize persistence service with the managed object context
+        let persistenceService = WeatherPersistenceService(context: coreDataStack.persistentContainer.viewContext)
+
+        // Initialize networking service
+        let weatherAPIClient = OpenWeatherAPIClient()
+
+        // Create the main window
+        let window = UIWindow(windowScene: windowScene)
+        // Initialize the main coordinator with a navigation controller and services
+        mainCoordinator = MainCoordinator(
+            navigationController: UINavigationController(),
+            weatherAPIClient: weatherAPIClient,
+            persistenceService: persistenceService
+        )
+        // Start the coordinator
+        mainCoordinator?.start()
+        
+        // Set the root view controller of the window
+        window.rootViewController = mainCoordinator?.navigationController
+        self.window = window
+        window.makeKeyAndVisible()
+        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -47,9 +73,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
 
         // Save changes in the application's managed object context when the application transitions to the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        // Save changes in the application's managed object context when the application transitions to the background.
+        CoreDataStack.shared.saveContext()
     }
-
-
 }
 
