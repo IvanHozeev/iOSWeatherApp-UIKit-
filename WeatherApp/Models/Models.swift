@@ -122,8 +122,4 @@ struct CityWeather: Identifiable, Hashable {
     }
 }
 
-// MARK: - CoreData Entities (Auto-generated from WeatherModel.xcdatamodeld)
-// You need to create WeatherModel.xcdatamodeld and the CityWeatherEntity.
-// Xcode will then automatically generate CityWeatherEntity.swift for you.
-// Make sure Codegen is set to 'Class Definition' for CityWeatherEntity in the .xcdatamodeld file inspector.
-//
+

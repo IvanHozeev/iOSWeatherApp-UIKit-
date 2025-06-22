@@ -13,19 +13,21 @@ import UIKit
 // MARK: - Coordinator Protocols
 
 /// Base protocol for all coordinators.
+
 protocol Coordinator: AnyObject {
-    var navigationController: UINavigationController { get set }
-    func start()
+    @MainActor var navigationController: UINavigationController { get set }
+    @MainActor func start()
 }
 
 /// Protocol for the main coordinator, defining navigation flows specific to the app.
 protocol MainCoordinatorProtocol: Coordinator {
-    func navigateToDetail(forCity cityName: String)
+    @MainActor func navigateToDetail(forCity cityName: String)
 }
 
 // MARK: - Main Coordinator
 
 /// Main coordinator responsible for application's primary navigation flow.
+@MainActor
 class MainCoordinator: MainCoordinatorProtocol {
     var navigationController: UINavigationController
 

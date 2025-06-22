@@ -19,6 +19,12 @@ protocol CityDetailViewModelProtocol: ObservableObject {
     var errorMessage: String? { get }
     var isOffline: Bool { get }
     
+    // Explicit publishers for Combine subscriptions
+    var cityWeatherPublisher: Published<CityWeather?>.Publisher { get }
+    var isLoadingPublisher: Published<Bool>.Publisher { get }
+    var errorMessagePublisher: Published<String?>.Publisher { get }
+    var isOfflinePublisher: Published<Bool>.Publisher { get }
+    
     var cityName: String { get } // City name to fetch details for
 
     func fetchWeatherDetails()
@@ -33,8 +39,14 @@ class CityDetailViewModel: CityDetailViewModelProtocol {
     @Published var errorMessage: String?
     @Published var isOffline: Bool = false
 
+    // Explicit publishers for Combine subscriptions
+    var cityWeatherPublisher: Published<CityWeather?>.Publisher { $cityWeather }
+    var isLoadingPublisher: Published<Bool>.Publisher { $isLoading }
+    var errorMessagePublisher: Published<String?>.Publisher { $errorMessage }
+    var isOfflinePublisher: Published<Bool>.Publisher { $isOffline }
+    
     let cityName: String // The city for which to display details
-
+    
     private let weatherAPIClient: WeatherAPIClientProtocol
     private let persistenceService: WeatherPersistenceServiceProtocol
     private let networkMonitor: NWPathMonitor

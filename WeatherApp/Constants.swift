@@ -9,7 +9,7 @@ import Foundation
 
 struct Constants {
     // Replace with your actual OpenWeatherMap API Key
-    static let openWeatherAPIKey = "YOUR_OPENWEATHERMAP_API_KEY"
+    static let openWeatherAPIKey = "a1128723f4c3296265a6fcc58d175020"
     static let openWeatherBaseURL = "https://api.openweathermap.org/data/2.5"
     static let openWeatherIconBaseURL = "https://openweathermap.org/img/wn/"
 

@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import Combine
 
 // MARK: - CityListViewController
 
 /// View Controller for displaying a list of cities and their current weather.
 class CityListViewController: UIViewController {
 
-    private var viewModel: CityListViewModelProtocol! // ViewModel is injected
+    private var viewModel: any CityListViewModelProtocol // ViewModel is injected
     private var coordinator: MainCoordinatorProtocol? // Coordinator is injected
 
     private let tableView = UITableView()
@@ -20,7 +21,7 @@ class CityListViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>() // For Combine subscriptions
 
     /// Initializes the view controller with a view model and coordinator.
-    init(viewModel: CityListViewModelProtocol, coordinator: MainCoordinatorProtocol) {
+    init(viewModel: any CityListViewModelProtocol, coordinator: MainCoordinatorProtocol) {
         self.viewModel = viewModel
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -73,7 +74,7 @@ class CityListViewController: UIViewController {
     /// Sets up bindings between ViewModel and View Controller.
     private func setupBindings() {
         // Subscribe to citiesWeather changes
-        viewModel.$citiesWeather
+        viewModel.citiesWeatherPublisher
             .receive(on: DispatchQueue.main) // Ensure UI updates on main thread
             .sink { [weak self] _ in
                 self?.tableView.reloadData()
@@ -82,7 +83,7 @@ class CityListViewController: UIViewController {
             .store(in: &cancellables)
 
         // Subscribe to isLoading changes
-        viewModel.$isLoading
+        viewModel.isLoadingPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
                 if isLoading {
@@ -94,7 +95,7 @@ class CityListViewController: UIViewController {
             .store(in: &cancellables)
 
         // Subscribe to errorMessage changes
-        viewModel.$errorMessage
+        viewModel.errorMessagePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 if let message = message, !message.isEmpty {
@@ -104,7 +105,7 @@ class CityListViewController: UIViewController {
             .store(in: &cancellables)
         
         // Subscribe to isOffline changes (for showing a persistent warning if needed)
-        viewModel.$isOffline
+        viewModel.isOfflinePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isOffline in
                 if isOffline {

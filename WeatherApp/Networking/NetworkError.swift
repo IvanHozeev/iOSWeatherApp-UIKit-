@@ -13,7 +13,7 @@ import Foundation
 enum NetworkError: Error, LocalizedError {
     case invalidURL
     case requestFailed(Error)
-    case invalidResponse
+    case invalidResponse(statusCode: Int, data: String?)
     case decodingFailed(Error)
     case noInternetConnection
     case customError(String) // For server-side custom errors
@@ -22,7 +22,12 @@ enum NetworkError: Error, LocalizedError {
         switch self {
         case .invalidURL: return "כתובת ה-URL אינה תקינה." // Invalid URL address.
         case .requestFailed(let error): return "הבקשה נכשלה: \(error.localizedDescription)" // Request failed
-        case .invalidResponse: return "תגובת שרת לא חוקית." // Invalid server response
+        case .invalidResponse(let statusCode, let data):
+            var description = "תגובת שרת לא חוקית. סטטוס: \(statusCode)." // Invalid server response. Status:
+            if let data = data, !data.isEmpty {
+                description += " נתונים: \(data)" // Data:
+            }
+            return description
         case .decodingFailed(let error): return "כשל בפענוח הנתונים: \(error.localizedDescription)" // Data decoding failed
         case .noInternetConnection: return "אין חיבור לאינטרנט. מוצגים נתונים אחרונים." // No internet connection. Displaying last cached data.
         case .customError(let message): return message // Custom error message

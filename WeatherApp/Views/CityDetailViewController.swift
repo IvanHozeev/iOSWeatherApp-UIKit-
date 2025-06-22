@@ -106,7 +106,7 @@ class CityDetailViewController: UIViewController {
     /// Sets up bindings between ViewModel and View Controller.
     private func setupBindings() {
         // Subscribe to cityWeather changes
-        viewModel.$cityWeather
+        viewModel.cityWeatherPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] weather in
                 self?.updateUI(with: weather)
@@ -114,7 +114,7 @@ class CityDetailViewController: UIViewController {
             .store(in: &cancellables)
 
         // Subscribe to isLoading changes
-        viewModel.$isLoading
+        viewModel.isLoadingPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
                 if isLoading {
@@ -128,7 +128,7 @@ class CityDetailViewController: UIViewController {
             .store(in: &cancellables)
 
         // Subscribe to errorMessage changes
-        viewModel.$errorMessage
+        viewModel.errorMessagePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 if let message = message, !message.isEmpty {

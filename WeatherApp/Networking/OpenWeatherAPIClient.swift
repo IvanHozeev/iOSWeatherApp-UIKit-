@@ -34,9 +34,17 @@ class OpenWeatherAPIClient: WeatherAPIClientProtocol {
         do {
             let (data, response) = try await session.data(from: url)
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                throw NetworkError.invalidResponse
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw NetworkError.invalidResponse(statusCode: 0, data: nil) // Не HTTP ответ
+            }
+            
+            if !(200...299).contains(httpResponse.statusCode) {
+                let responseBody = String(data: data, encoding: .utf8)
+                print("--- API Response Error for \(city) ---")
+                print("Status Code: \(httpResponse.statusCode)")
+                print("Response Body: \(responseBody ?? "No Data")")
+                print("---------------------------------")
+                throw NetworkError.invalidResponse(statusCode: httpResponse.statusCode, data: responseBody)
             }
 
             let decoder = JSONDecoder()
