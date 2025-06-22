@@ -114,7 +114,10 @@ class CityListViewModel: CityListViewModelProtocol {
                 }
                 
                 let responses = try await weatherAPIClient.fetchCurrentWeather(forCities: predefinedCities)
-                let newCityWeathers = responses.map { CityWeather(response: $0) }
+                var newCityWeathers = responses.map { CityWeather(response: $0) }
+                
+                // Sort the cities by name to ensure consistent order
+                 newCityWeathers.sort { $0.name < $1.name }
                 
                 // Update UI and save to persistence
                 self.citiesWeather = newCityWeathers
